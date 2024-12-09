@@ -29,7 +29,7 @@ from tqdm import tqdm
 
 fps = 120
 
-cap = cv2.VideoCapture('/home/rhijn/Camera-Stream/output.avi') # vervang dit path naar het path van je eigen video
+cap = cv2.VideoCapture('videos/koelkast_videos_640_480_120fps_20cm_telelens/koel_640_480_120fps_take1.h264') # vervang dit path naar het path van je eigen video
 
 # The following code is modified code written by Jonas Schoonhoven!
 ###################################################################
@@ -117,5 +117,36 @@ fig.update_layout(
     xaxis_title='X position',
     yaxis_title='Y position',
     showlegend=True
+)
+fig.show()
+
+# Plot the oscillation of the ROI in the y-direction
+fig = px.line(df_displacements, x='time', y='y', title='Oscillation of ROI in y-direction')
+fig.update_layout(
+    xaxis_title='Time (s)',
+    yaxis_title='Y position'
+)
+fig.show()
+
+# Compute the FFT of the y-displacement
+time = df_displacements['time'].values
+y = df_displacements['y'].values
+
+# Time step
+dt = np.mean(np.diff(time))
+# Sampling frequency
+fs = 1 / dt  
+
+fft_result = np.fft.fft(y)
+frequencies = np.fft.fftfreq(len(y), d=dt)
+
+# Only keep positive frequencies
+positive_freqs = frequencies[frequencies >= 0]
+amplitude_spectrum = np.abs(fft_result[frequencies >= 0])
+
+fig = px.line(x=positive_freqs, y=amplitude_spectrum, title='Frequency Spectrum')
+fig.update_layout(
+    xaxis_title='Frequency (Hz)',
+    yaxis_title='Amplitude'
 )
 fig.show()
