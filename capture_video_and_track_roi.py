@@ -29,8 +29,9 @@ from tqdm import tqdm
 
 fps = 120
 
-cap = cv2.VideoCapture('videos/koelkast_videos_640_480_120fps_20cm_telelens/koel_640_480_120fps_take1.h264') # vervang dit path naar het path van je eigen video
-
+cap = cv2.VideoCapture('videos/koelkast_videos_640_480_120fps_24cm_6mmlens\koel_take1.h264') # vervang dit path naar het path van je eigen video
+cap_width  = int(cap.get(cv2.CAP_PROP_FRAME_WIDTH))
+cap_height = int(cap.get(cv2.CAP_PROP_FRAME_HEIGHT))
 # The following code is modified code written by Jonas Schoonhoven!
 ###################################################################
 
@@ -67,6 +68,17 @@ if p0 is None:
 # List to store the displacement of points
 displacements = []
 
+output = cv2.VideoWriter( 
+        'C:/Users/Gebruiker/Videos/roi_tracked_output.avi' , cv2.VideoWriter_fourcc(*'XVID'), fps, (cap_width, cap_height))
+
+# Draw initial tracking point
+highlight_color = (0, 255, 0)  # Green
+circle_radius = 5              
+circle_thickness = -1          # -1 to fill the circle
+
+frame_circle = cv2.circle(old_frame, p0.astype(int).ravel(), circle_radius, highlight_color, circle_thickness)
+output.write(frame_circle)
+
 # Process video
 iteration = 0
 with tqdm(total=int(cap.get(cv2.CAP_PROP_FRAME_COUNT)), desc="Tracking") as pbar:
@@ -97,12 +109,15 @@ with tqdm(total=int(cap.get(cv2.CAP_PROP_FRAME_COUNT)), desc="Tracking") as pbar
         else:
             print("Unable to determine tracking features, please adjust bounding box.")
             break  # Break out of the loop if tracking fails
+        
+        frame_circle = cv2.circle(frame, good_new.astype(int).ravel(), circle_radius, highlight_color, circle_thickness)
+        output.write(frame_circle)
 
         pbar.update(1)
         iteration += 1
 
 cap.release()
-
+output.release()
 ###################################################################
 
 # Convert the list of displacements to a DataFrame
@@ -128,9 +143,17 @@ fig.update_layout(
 )
 fig.show()
 
+# Plot the rate of change of the ROI in the y-direction (dy)
+fig = px.line(df_displacements, x='time', y='dy', title='Rate of change in y-direction (dy)')
+fig.update_layout(
+    xaxis_title='Time (s)',
+    yaxis_title='DY'
+)
+fig.show()
+
 # Compute the FFT of the y-displacement
 time = df_displacements['time'].values
-y = df_displacements['y'].values
+y = df_displacements['dy'].values
 
 # Time step
 dt = np.mean(np.diff(time))
@@ -150,3 +173,4 @@ fig.update_layout(
     yaxis_title='Amplitude'
 )
 fig.show()
+print("dominant frequency:", np.argmax(amplitude_spectrum))
