@@ -110,7 +110,7 @@ while True:
         amplitude_spectrum = np.abs(fft_result[frequencies >= 0])
 
         # find the dominant frequency
-        dominant_frequency = np.argmax(amplitude_spectrum)
+        dominant_frequency = positive_freqs[np.argmax(amplitude_spectrum)]
         print(dominant_frequency)
         
         elapsed_time = 0
