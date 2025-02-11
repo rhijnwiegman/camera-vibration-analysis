@@ -8,7 +8,8 @@ import scipy.stats as stats
 
 fps = 120
 
-cap = cv2.VideoCapture('videos\koelkast_videos_640_480_120fps_20cm_telelens\koel_640_480_120fps_take1.h264') # vervang dit path naar het path van je eigen video
+#cap = cv2.VideoCapture('videos/koelkast_videos_640_480_120fps_20cm_telelens/koel_640_480_120fps_take1.h264') # vervang dit path naar het path van je eigen video
+cap = cv2.VideoCapture(0)
 cap_width  = int(cap.get(cv2.CAP_PROP_FRAME_WIDTH))
 cap_height = int(cap.get(cv2.CAP_PROP_FRAME_HEIGHT))
 # The following code is modified code written by Sten den Hartog!
