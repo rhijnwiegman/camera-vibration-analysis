@@ -3,8 +3,11 @@ import numpy as np
 import cv2
 from picamera2 import Picamera2
 import pandas as pd
-import plotly.express as px
-import plotly.graph_objects as go
+#import plotly.express as px
+#import plotly.graph_objects as go
+import matplotlib
+matplotlib.use("TkAgg")
+import matplotlib.pyplot as plt
 import scipy.stats as stats
 
 fps = 120
@@ -60,6 +63,10 @@ circle_thickness = -1          # -1 to fill the circle
 frame_circle = cv2.circle(old_frame, p0.astype(int).ravel(), circle_radius, highlight_color, circle_thickness)
 cv2.imshow('frame',frame_circle)
 
+# Enable interactive plot for live frequency spectrum plotting
+plt.ion()
+fig, ax = plt.subplots()
+ 
 # Process video
 iteration = 0
 elapsed_time = 0
@@ -114,6 +121,16 @@ while True:
         # find the dominant frequency
         dominant_frequency = positive_freqs[np.argmax(amplitude_spectrum)]
         print(dominant_frequency)
+        
+        # plot frequency spectrum of this interval
+        ax.clear()
+        ax.plot(positive_freqs, amplitude_spectrum, '-b')
+        ax.set_xlabel("Frequency (Hz)")
+        ax.set_ylabel("Amplitude")
+        ax.set_title("Frequency spectrum")
+        ax.grid(True)
+        
+        plt.pause(0.5)
         
         elapsed_time = 0
 
