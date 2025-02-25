@@ -12,4 +12,5 @@ opencv-python==4.11.0
 picamera2==0.3.12
 pandas
 scipy
+plotly
 ```
