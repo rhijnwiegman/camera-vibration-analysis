@@ -9,4 +9,5 @@
 numpy=1.26.4
 matplotlib==3.9.4
 opencv-python==4.11.0
+picamera2==0.3.12
 ```
