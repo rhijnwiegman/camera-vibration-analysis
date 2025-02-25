@@ -1,6 +1,7 @@
 import os
 import numpy as np
 import cv2
+from picamera2 import Picamera2
 import pandas as pd
 import plotly.express as px
 import plotly.graph_objects as go
@@ -8,10 +9,12 @@ import scipy.stats as stats
 
 fps = 120
 
-cap = cv2.VideoCapture('videos/koelkast_videos_640_480_120fps_20cm_telelens/koel_640_480_120fps_take1.h264') # vervang dit path naar het path van je eigen video
+picam2 = Picamera2()
+picam2.configure(picam2.create_preview_configuration(main={"format": 'XRGB8888', "size": (640, 480)}, controls={"FrameRate": fps}))
+picam2.start()
 
-cap_width  = int(cap.get(cv2.CAP_PROP_FRAME_WIDTH))
-cap_height = int(cap.get(cv2.CAP_PROP_FRAME_HEIGHT))
+cap_width  = 640
+cap_height = 480
 # The following code is modified code written by Sten den Hartog!
 ###################################################################
 
@@ -22,7 +25,7 @@ feature_params = dict(maxCorners=1, qualityLevel=0.3, minDistance=7, blockSize=7
 lk_params = dict(winSize=(15, 15), maxLevel=2, criteria=(cv2.TERM_CRITERIA_EPS | cv2.TERM_CRITERIA_COUNT, 10, 0.03))
 
 # Read the first frame
-ret, old_frame = cap.read()
+old_frame = picam2.capture_array()
 old_gray = cv2.cvtColor(old_frame, cv2.COLOR_BGR2GRAY)
 
 # Select ROI for tracking
@@ -61,9 +64,7 @@ cv2.imshow('frame',frame_circle)
 iteration = 0
 elapsed_time = 0
 while True:
-    ret, frame = cap.read()
-    if not ret:
-        break
+    frame = picam2.capture_array()
     frame_gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
 
     # Calculate optical flow
