@@ -14,3 +14,8 @@ pandas
 scipy
 plotly
 ```
+Make sure that `python3-pil.imagetk` is installed on the Raspberry Pi:
+```
+sudo apt update
+sudo apt install python3-pil.imagetk
+```
