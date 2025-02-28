@@ -22,4 +22,4 @@ sudo apt install python3-pil.imagetk
 
 ## Running live camera vibration analysis on Raspberry Pi4
 Example demo: 
-![demo](images/image.png)
+![demo](demo_footage/demo.heic)
