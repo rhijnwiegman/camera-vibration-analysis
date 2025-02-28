@@ -19,3 +19,7 @@ Make sure that `python3-pil.imagetk` is installed on the Raspberry Pi:
 sudo apt update
 sudo apt install python3-pil.imagetk
 ```
+
+## Running live camera vibration analysis on Raspberry Pi4
+Example demo: 
+![demo](images/image.png)
